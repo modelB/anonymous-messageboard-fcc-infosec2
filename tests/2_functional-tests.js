@@ -8,13 +8,23 @@ chai.use(chaiHttp);
 
 suite("Functional Tests", function () {
   test("creates a thread", (done) => {
+    const date = new Date();
     chai
       .request(app)
       .post("/api/threads/general")
       .send({ text: "test", delete_password: "test" })
       .end((err, res) => {
         assert.equal(res.status, 200);
-        done();
+        chai
+          .request(app)
+          .get("/api/threads/general")
+          .end((err, res) => {
+            console.log(res.body[0])
+            assert.equal(date.toDateString(), new Date(res.body[0].created_on).toDateString())
+            assert.equal(res.body[0].created_on, res.body[0].bumped_on)
+            assert.equal(res.status, 200);
+            done();
+          });
       });
   });
 
@@ -78,7 +88,11 @@ suite("Functional Tests", function () {
         chai
           .request(app)
           .post("/api/replies/general")
-          .send({ thread_id: testThreadId, text: 'test', delete_password: 'test' })
+          .send({
+            thread_id: testThreadId,
+            text: "test",
+            delete_password: "test",
+          })
           .end((err, res) => {
             assert.equal(res.status, 200);
             done();
@@ -103,22 +117,21 @@ suite("Functional Tests", function () {
           });
       });
   });
-  
+
   test("deletes a reply with incorrect password", (done) => {
     chai
       .request(app)
       .get("/api/threads/general")
       .end((err, res) => {
-        const testReplyId = res.body.find(
-          (thread) => thread.text === "test"
-        ).replies[0]._id;
-        console.log({testReplyId})
+        const testReplyId = res.body.find((thread) => thread.text === "test")
+          .replies[0]._id;
+        console.log({ testReplyId });
         chai
           .request(app)
           .delete("/api/replies/general")
-          .send({ reply_id: testReplyId, delete_password: 'wrongpassword' })
+          .send({ reply_id: testReplyId, delete_password: "wrongpassword" })
           .end((err, res) => {
-            assert.equal(res.text, 'incorrect password');
+            assert.equal(res.text, "incorrect password");
             done();
           });
       });
@@ -129,16 +142,15 @@ suite("Functional Tests", function () {
       .request(app)
       .get("/api/threads/general")
       .end((err, res) => {
-        const testReplyId = res.body.find(
-          (thread) => thread.text === "test"
-        ).replies[0]._id;
-        console.log({testReplyId})
+        const testReplyId = res.body.find((thread) => thread.text === "test")
+          .replies[0]._id;
+        console.log({ testReplyId });
         chai
           .request(app)
           .put("/api/replies/general")
           .send({ reply_id: testReplyId })
           .end((err, res) => {
-            assert.equal(res.text, 'reported');
+            assert.equal(res.text, "reported");
             done();
           });
       });
@@ -149,21 +161,20 @@ suite("Functional Tests", function () {
       .request(app)
       .get("/api/threads/general")
       .end((err, res) => {
-        const testReplyId = res.body.find(
-          (thread) => thread.text === "test"
-        ).replies[0]._id;
-        console.log({testReplyId})
+        const testReplyId = res.body.find((thread) => thread.text === "test")
+          .replies[0]._id;
+        console.log({ testReplyId });
         chai
           .request(app)
           .delete("/api/replies/general")
-          .send({ reply_id: testReplyId, delete_password: 'test' })
+          .send({ reply_id: testReplyId, delete_password: "test" })
           .end((err, res) => {
-            assert.equal(res.text, 'success');
+            assert.equal(res.text, "success");
             done();
           });
       });
   });
-  
+
   test("deleting a thread with the correct password", (done) => {
     chai
       .request(app)

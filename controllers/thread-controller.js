@@ -28,7 +28,7 @@ const deleteThread = async (thread_id, password) => {
 
 const getThreads = async (board) => {
     const threads = (await pool.query(
-    `SELECT threads._id, threads.text, threads.created_on, json_agg(replies) AS replies, COUNT(replies) AS replyCount
+    `SELECT threads._id, threads.text, threads.created_on, threads.bumped_on, json_agg(replies) AS replies, COUNT(replies) AS replyCount
     FROM threads
     FULL JOIN replies
     ON threads._id = replies.thread_id
