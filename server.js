@@ -12,9 +12,7 @@ const helmet = require("helmet");
 const app = express();
 app.use(helmet.frameguard());
 app.use(helmet.dnsPrefetchControl());
-helmet.referrerPolicy({
-  policy: ["origin"],
-});
+helmet.referrerPolicy();
 
 app.use("/public", express.static(process.cwd() + "/public"));
 
