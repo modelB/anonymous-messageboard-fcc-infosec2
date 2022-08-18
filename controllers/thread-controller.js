@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const createThread = (name, password, board) => {
   const id = uuidv4();
   pool.query(
-    "INSERT INTO threads (_id, text, password, board) VALUES ($1, $2, $3, $4) RETURNING *",
+    "INSERT INTO threads (_id, text, delete_password, board) VALUES ($1, $2, $3, $4) RETURNING *",
     [id, name, password, board],
     (err, results) => {
       if (err) console.error(err);
@@ -15,7 +15,7 @@ const createThread = (name, password, board) => {
 
 const deleteThread = async (thread_id, password) => {
     const matchingThread = (await pool.query('SELECT * FROM threads WHERE _id = $1', [thread_id]))?.rows[0] ?? null;
-    if (matchingThread.password === password || !matchingThread.password) {
+    if (matchingThread.delete_password === password || !matchingThread.delete_password) {
     await pool.query(
       "DELETE FROM replies WHERE thread_id = $1",
       [thread_id]);

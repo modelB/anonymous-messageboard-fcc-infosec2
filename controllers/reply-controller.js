@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const createReply = (name, password, thread_id) => {
   const id = uuidv4();
   pool.query(
-    "INSERT INTO replies (_id, text, password, thread_id) VALUES ($1, $2, $3, $4) RETURNING *",
+    "INSERT INTO replies (_id, text, delete_password, thread_id) VALUES ($1, $2, $3, $4) RETURNING *",
     [id, name, password, thread_id],
     (err, results) => {
       if (err) console.error(err);
@@ -19,7 +19,7 @@ const deleteReply = async (password, replyId) => {
   const reply =
     (await pool.query("SELECT * FROM replies WHERE _id = $1", [replyId]))
       ?.rows[0] ?? null;
-  if (reply && reply.password === password) {
+  if (reply && reply.delete_password === password) {
     await pool.query("UPDATE replies SET text = '[deleted]' WHERE _id = $1", [
       replyId,
     ]);
