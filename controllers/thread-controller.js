@@ -37,7 +37,7 @@ const getThreads = async (board) => {
     ORDER BY created_on DESC`,
     [board]
   )).rows;
-  return threads;
+  return threads.slice(0, 10);
 };
 
 const getThread = async (threadId) => {
