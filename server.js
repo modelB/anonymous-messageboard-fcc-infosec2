@@ -13,7 +13,9 @@ const app = express();
 app.use(helmet.frameguard());
 app.use(helmet.dnsPrefetchControl());
 app.use(
-  helmet.referrerPolicy()
+  helmet.referrerPolicy({
+    policy: ["same-origin"],
+  })
 );
 
 app.use("/public", express.static(process.cwd() + "/public"));
