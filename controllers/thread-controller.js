@@ -60,6 +60,13 @@ const getThread = async (threadId) => {
     GROUP BY threads._id`,
     [threadId]
   )).rows[0];
+  thread.replies = thread.replies.map(reply => {
+    if (reply) {
+        delete reply.delete_password;
+        delete reply.reported;
+    }
+    return reply;
+  })
   return thread;
 };
 
