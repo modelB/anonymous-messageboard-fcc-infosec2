@@ -25,10 +25,10 @@ module.exports = function (app) {
     res.status(200).send(resMsg);
   });
 
-  app.route("/api/replies/:board").post((req, res) => {
+  app.route("/api/replies/:board").post(async (req, res) => {
     const { text, delete_password, thread_id } = req.body;
-    createReply(text, delete_password, thread_id);
-    res.send(200);
+    const apiRes = await createReply(text, delete_password, thread_id);
+    res.send(apiRes);
   });
 
   app.route("/api/threads/:board").get(async (req, res) => {

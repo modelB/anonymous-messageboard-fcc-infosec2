@@ -8,19 +8,21 @@ chai.use(chaiHttp);
 
 suite("Functional Tests", function () {
   test("creates a thread", (done) => {
-    const date = new Date();
     chai
       .request(app)
       .post("/api/threads/general")
       .send({ text: "test", delete_password: "test" })
       .end((err, res) => {
-        assert.equal(res.status, 200);
         chai
           .request(app)
           .get("/api/threads/general")
           .end((err, res) => {
-            assert.equal(date.toDateString(), new Date(res.body[0].created_on).toDateString())
-            assert.equal(res.body[0].created_on, res.body[0].bumped_on)
+            const date = new Date();
+            assert.equal(
+              date.toDateString(),
+              (new Date(res.body[0].created_on)).toDateString()
+            );
+            assert.equal(res.body[0].created_on, res.body[0].bumped_on);
             assert.equal(res.status, 200);
             done();
           });
@@ -81,9 +83,7 @@ suite("Functional Tests", function () {
       .request(app)
       .get("/api/threads/general")
       .end((err, res) => {
-        const testThreadId = res.body.find(
-          (thread) => thread.text === "test"
-        )._id;
+        const testThreadId = res.body[0]._id;
         chai
           .request(app)
           .post("/api/replies/general")
@@ -93,8 +93,13 @@ suite("Functional Tests", function () {
             delete_password: "test",
           })
           .end((err, res) => {
-            assert.equal(res.status, 200);
-            done();
+            chai
+              .request(app)
+              .get(`/api/replies/general?thread_id=${testThreadId}`)
+              .end((err, res2) => {
+                assert.equal(res2.body.bumped_on, res2.body.replies[0].created_on);
+                done();
+              });
           });
       });
   });
