@@ -27,7 +27,7 @@ const deleteThread = async (thread_id, password) => {
   };
 
 const getThreads = async (board) => {
-    const threads = (await pool.query(
+    let threads = (await pool.query(
     `SELECT threads._id, threads.text, threads.created_on, threads.bumped_on, json_agg(replies) AS replies, COUNT(replies) AS replyCount
     FROM threads
     FULL JOIN replies
@@ -37,6 +37,16 @@ const getThreads = async (board) => {
     ORDER BY created_on DESC`,
     [board]
   )).rows;
+  threads = threads.map(thread => {
+    thread.replies = thread.replies.map(reply => {
+        if (reply) {
+            delete reply.delete_password;
+            delete reply.reported;
+        }
+        return reply;
+    })
+    return thread;
+  })
   return threads.slice(0, 10);
 };
 

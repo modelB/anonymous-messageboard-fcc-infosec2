@@ -34,7 +34,7 @@ suite("Functional Tests", function () {
       .request(app)
       .get("/api/threads/general")
       .end((err, res) => {
-        console.log(res.body);
+        console.log(res.body[9]);
         assert.equal(res.status, 200);
         assert.isAbove(res.body.length, 0);
         done();
