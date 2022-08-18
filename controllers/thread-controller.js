@@ -34,7 +34,7 @@ const getThreads = async (board) => {
     ON threads._id = replies.thread_id
     WHERE board = $1
     GROUP BY threads._id
-    ORDER BY created_on ASC`,
+    ORDER BY created_on DESC`,
     [board]
   )).rows;
   return threads;
