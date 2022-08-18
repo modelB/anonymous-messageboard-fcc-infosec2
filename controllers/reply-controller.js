@@ -8,12 +8,13 @@ const createReply = (name, password, thread_id) => {
     [id, name, password, thread_id],
     (err, results) => {
       if (err) console.error(err);
+      pool.query("UPDATE threads SET bumped_on = $1 WHERE _id = $2", [results.rows[0].created_on,
+        thread_id,
+      ]);
       return results;
     }
   );
-  pool.query("UPDATE threads SET bumped_on = now() WHERE _id = $1", [
-    thread_id,
-  ]);
+  
 };
 const deleteReply = async (password, replyId) => {
   const reply =

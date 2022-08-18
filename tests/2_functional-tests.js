@@ -19,7 +19,6 @@ suite("Functional Tests", function () {
           .request(app)
           .get("/api/threads/general")
           .end((err, res) => {
-            console.log(res.body[0])
             assert.equal(date.toDateString(), new Date(res.body[0].created_on).toDateString())
             assert.equal(res.body[0].created_on, res.body[0].bumped_on)
             assert.equal(res.status, 200);
@@ -125,7 +124,6 @@ suite("Functional Tests", function () {
       .end((err, res) => {
         const testReplyId = res.body.find((thread) => thread.text === "test")
           .replies[0]._id;
-        console.log({ testReplyId });
         chai
           .request(app)
           .delete("/api/replies/general")
@@ -144,7 +142,6 @@ suite("Functional Tests", function () {
       .end((err, res) => {
         const testReplyId = res.body.find((thread) => thread.text === "test")
           .replies[0]._id;
-        console.log({ testReplyId });
         chai
           .request(app)
           .put("/api/replies/general")
@@ -163,7 +160,6 @@ suite("Functional Tests", function () {
       .end((err, res) => {
         const testReplyId = res.body.find((thread) => thread.text === "test")
           .replies[0]._id;
-        console.log({ testReplyId });
         chai
           .request(app)
           .delete("/api/replies/general")
